@@ -1,78 +1,44 @@
-// register("step", () => {
-//
-// }.setFps(20)
-
 let mainText = "&7Engineer &cModules"
 let inGui = false
 let mainGui = new Gui()
 
+const screenWidth = Renderer.screen.getWidth()
+const screenHeight = Renderer.screen.getHeight()
+
 const resetColors = () => buttons.forEach(button => button.color = 0x88000000)
 
-const openCatagory = cat => ChatLib.command(cat, true)
+const inBox = (x, y, bx, by, bw, bh) => (x >= bx && x <= bx + bw && y >= by && y <= by + bh)
 
-let buttons = [
-    {
-        text: "&a/misc",
-        open: () => openCatagory("misc"),
-        position: [
-            Renderer.screen.getWidth() / 2.424,
-            Renderer.screen.getHeight() / 3.7,
-        ],
-    },
-    {
-        text: "&b/splits",
-        open: () => openCatagory("splits"),
-        position: [
-            Renderer.screen.getWidth() / 2.424,
-            Renderer.screen.getHeight() / 2.7,
-        ],
-    },
-    {
-        text: "&c/terms",
-        open: () => openCatagory("terms"),
-        position: [
-            Renderer.screen.getWidth() / 2.424,
-            Renderer.screen.getHeight() / 2.13,
-        ],
-    },
-]
+let buttons = ["misc", "splits", "terms"].map((cat, i) => ({
+    text: `&${"abc"[i]}/${cat}`,
+    open: () => ChatLib.command(cat, true),
+    color: 0x88000000,
+    position: [
+        screenWidth / 2.424,
+        screenHeight / [3.7, 2.7, 2.13][i],
+    ],
+}))
 
-const inRect = (x, y, bx, by, bw, bh) => (x >= bx && x <= bx + bw && y >= by && y <= by + bh)
-
-guiClicked = register("guiMouseClick", (x, y, bn) => {
-    console.log(`: ${bn}`)
+const guiClicked = register("guiMouseClick", (x, y, bn) => {
     buttons.forEach(button => {
         const [bx, by] = button.position
-        const bw = 170
-        const bh = 50
-        if (inRect(x, y, bx, by, bw, bh)) button.open()
+        if (inBox(x, y, bx, by, 170, 50)) button.open()
     })
 }).unregister()
 
-// ChatLib.chat(Client.getMouseX())
-
 const renderMain = register("renderOverlay", () => {
     Renderer.drawRect(0x88000000, 0, 0, 999, 999)
-    new Text(mainText, Renderer.screen.getWidth() / 2, Renderer.screen.getHeight() / 5)
+    new Text(mainText, screenWidth / 2, screenHeight / 5)
         .setShadow(true).setScale(2).setAlign("center").draw()
-    buttons.forEach((button, index) => {
-        const x = Client.getMouseX()
-        const y = Client.getMouseY()
-        const [bx, by] = button.position
-        const bw = 170
-        const bh = 50
-        if (inRect(x, y, bx, by, bw, bh)) {
-            resetColors()
-            button.color = 0xAA000000
-        } else { button.color = 0x88000000 }
 
-        Renderer.drawRect(button.color, button.position[0], button.position[1], 170, 50)
+    const [x, y] = [Client.getMouseX(), Client.getMouseY()]
+
+    buttons.forEach(b => {
+        const [bx, by] = b.position
+        b.color = inBox(x, y, bx, by, 170, 50) ? (resetColors(), 0xAA000000) : 0x88000000
+        Renderer.drawRect(b.color, bx, by, 170, 50)
+        new Text(b.text, bx + 85, by + 17).setShadow(true).setScale(1.5).setAlign("center").draw()
     })
-    buttons.forEach((button, index) => new Text(button.text, button.position[0] + 85, button.position[1] + 17).setShadow(true).setScale(1.5).setAlign("center").draw())
-
-    // Renderer.drawRect(0xCC222222, Renderer.screen.getWidth() / 2.424, Renderer.screen.getHeight() / 3.7, 170, 50)
-    // buttons.forEach((button, index) => new Text(button.text, button.position[0] + 85, button.position[1] + ).setShadow(true).setScale(1.5).setAlign("center").draw())
-    // Renderer.drawRect(0xCC222222, Renderer.screen.getWidth() / 2.424, Renderer.screen.getHeight() / 2.13, 170, 50)
 }).unregister()
 
 register("guiClosed", () => {
