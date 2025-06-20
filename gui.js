@@ -19,10 +19,10 @@ let buttons = ["misc", "splits", "terms"].map((cat, i) => ({
     ],
 }))
 
-const guiClicked = register("guiMouseClick", (x, y, bn) => {
-    buttons.forEach(button => {
-        const [bx, by] = button.position
-        if (inBox(x, y, bx, by, 170, 50)) button.open()
+const guiClicked = register("guiMouseClick", (x, y) => {
+    buttons.forEach(b => {
+        const [bx, by] = b.position
+        if (inBox(x, y, bx, by, 170, 50)) b.open()
     })
 }).unregister()
 
