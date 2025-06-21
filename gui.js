@@ -5,6 +5,9 @@ let mainGui = new Gui()
 const screenWidth = Renderer.screen.getWidth()
 const screenHeight = Renderer.screen.getHeight()
 
+const sw = width => Math.floor(size * Renderer.screen.getWidth())
+const sh = height => Math.floor(size * Renderer.screen.getHeight())
+
 const resetColors = () => buttons.forEach(button => button.color = 0x88000000)
 
 const inBox = (x, y, bx, by, bw, bh) => (x >= bx && x <= bx + bw && y >= by && y <= by + bh)
@@ -27,7 +30,6 @@ const guiClicked = register("guiMouseClick", (x, y) => {
 }).unregister()
 
 const renderMain = register("renderOverlay", () => {
-    Renderer.drawRect(0x88000000, 0, 0, 999, 999)
     new Text(mainText, screenWidth / 2, screenHeight / 5)
         .setShadow(true).setScale(2).setAlign("center").draw()
 
